@@ -31,15 +31,27 @@ module Wordtracker
     # Get a list of related keyphrases and their occurences when searching
     def get_lateral_keyphrases(options = {})
       options.symbolize_keys!
-      phrases = {}
       send("get_lateral_keyphrases", 
-               options[:keyphrases] || [],
-               !!options[:include_plurals],
-               options[:adult_filter] || "off",
-               options[:max] || 0,
-               options[:timeout] || 0)
+           options[:keyphrases] || [],
+           !!options[:include_plurals],
+           options[:adult_filter] || "off",
+           options[:max] || 0,
+           options[:timeout] || 0)
     end
     
+    # Get a list of popularities for all keywords
+    def get_all_words_popularity(options = {})
+      options.symbolize_keys!
+      send("get_all_words_popularity", 
+           options[:keyphrases] || [],
+           options[:case] || "case_distinct",
+           !!options[:include_misspellings],
+           !!options[:include_plurals],
+           options[:adult_filter] || "off",
+           options[:max] || 0,
+           options[:timeout] || 0)
+    end
+
     private 
       # Send a call to the service using the id
       def send(*args)

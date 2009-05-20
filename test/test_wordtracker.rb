@@ -29,7 +29,12 @@ class TestWordtracker < Test::Unit::TestCase
   end
 
   def test_get_lateral_keyphrases
-    assert_equal @w.get_lateral_keyphrases(:keyphrases => ["cats", "kittens"]),
-      { "cats" => 999, "kittens" => 999 }
+    assert_equal({ "cats" => 999, "kittens" => 999 },
+      @w.get_lateral_keyphrases(:keyphrases => ["cats", "kittens"]))
+  end
+
+  def test_get_all_words_popularity
+    assert_equal({ "cats" => 999, "kittens" => 999 },
+      @w.get_all_words_popularity(:keyphrases => ["cats", "kittens"]))
   end
 end
