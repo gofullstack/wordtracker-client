@@ -23,11 +23,10 @@ module Wordtracker
       super(url, "/")
     end
 
-    # See if the service responds
-    def ping
-      send("ping")
+    def method_missing(method, *args)
+      send(method, *args)
     end
-    
+
     # Get a list of related keyphrases and their occurences when searching
     def get_lateral_keyphrases(options = {})
       options.symbolize_keys!

@@ -37,4 +37,27 @@ class TestWordtracker < Test::Unit::TestCase
     assert_equal({ "cats" => 999, "kittens" => 999 },
       @w.get_all_words_popularity(:keyphrases => ["cats", "kittens"]))
   end
+
+  def test_query_version
+    assert_equal({ "api_version" => "9.99", "build_number" => 999 },
+      @w.query_version)
+  end
+
+  def test_query_permissions
+    assert_equal({"get_all_words_popularity"=>{"cost_per_call"=>99, "timeout_limit"=>99, "keyphrase_limit"=>999, "result_limit"=>999}}, 
+      @w.query_permissions)
+  end
+
+  def test_query_balance
+     assert_equal(123.45, @w.query_balance)
+  end
+
+  def test_get_total_searches
+    assert_equal(999999, @w.get_total_searches)
+  end
+
+  def test_get_plurals
+    assert_equal({ "cat" => ["cat"], "kitten" => ["kitten"] }, 
+      @w.get_plurals(["cat", "kitten"]))
+  end
 end
