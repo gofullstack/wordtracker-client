@@ -11,6 +11,7 @@ module Wordtracker
   
   # Error class
   class FaultException < XMLRPC::FaultException; end
+  class InsufficientFundsException < RuntimeError; end
 
   class Client < XMLRPC::Client
 
@@ -21,6 +22,10 @@ module Wordtracker
       url = @id == "guest" ? "test.xmlrpc.wordtracker.com" :
         "xmlrpc.wordtracker.com"
       super(url, "/")
+
+      @balance = 0.0; @costs = {} # Initialize
+      @balance = query_balance rescue 0.0
+      @costs = query_permissions rescue {}
     end
 
     def method_missing(method, *args)
@@ -57,10 +62,29 @@ module Wordtracker
         args = args.insert(1, @id) # Add the id in the arguments
         meth = args[0] # Method is the 1st argument
         begin
-          self.call(*args)
+          if affordable?(meth)
+            deduct(meth)
+            self.call(*args)
+          else 
+            raise Wordtracker::InsufficientFundsException.new
+          end
         rescue XMLRPC::FaultException => e
           raise Wordtracker::FaultException.new(0, "RPC error calling #{meth}")
         end
+      end
+
+      # Get the cost of a call
+      def cost(meth)
+        @costs[meth]["cost_per_call"] / 100.0 rescue 0.0
+      end
+
+      ## Deduct the cost of a call from the total balance
+      def deduct(meth)
+        @balance -= cost(meth)
+      end
+
+      def affordable?(meth)
+        (@balance - cost(meth)) >= 0
       end
   end
 end
